@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.qingqiao.mapper.StudentMapper">
+    <resultMap id="basicResultMap" type="Student">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <collection property="sc" column="sid" ofType="StuCou">
+            <association property="course" column="cid" javaType="Course">
+                <id property="id" column="cid"/>
+                <result property="name" column="cname"/>
+            </association>
+        </collection>
+    </resultMap>
+    <select id="queryAll" resultMap="basicResultMap">
+        select s.id,s.name,s.sex,s.age,sc.cid,c.name cname from student s join stucou sc on s.id = sc.sid join course c on c.id = sc.cid order by s.id;
+    </select>
+    <select id="getCourse" resultType="Course">
+        select * from course;
+    </select>
+    <select id="queryById" resultMap="basicResultMap">
+        select s.id,s.name,s.sex,s.age,sc.cid,c.name cname from student s join stucou sc on s.id = sc.sid join course c on c.id = sc.cid where s.id = #{id} order by s.id;
+    </select>
+    <insert id="insertStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="id">
+        insert into student(name, sex, age) value(#{name},#{sex},#{age});
+    </insert>
+    <insert id="insertStuCou">
+        insert into stucou value(#{sid},#{cid});
+    </insert>
+    <update id="updateStudent" parameterType="Student">
+        update student set name=#{name},sex=#{sex},age=#{age} where id = #{id};
+    </update>
+    <delete id="deleteStuCou">
+        delete from stucou where sid = #{id};
+    </delete>
+    <delete id="deleteStudent">
+        delete from student where id = #{id};
+    </delete>
+</mapper>
